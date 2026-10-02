@@ -28,7 +28,7 @@ class AuthController extends Controller
             'message' => 'User registered successfully.',
             'data' => [
                 'user' => new UserResource($result['user']),
-                'token' => $result['token'],
+                //'token' => $result['token'],
             ],
         ], 201);
     }
@@ -72,7 +72,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $token = $request->bearerToken();
+        $token = $request->header('Authorization');
 
         $this->authenticationService->logout($token);
 

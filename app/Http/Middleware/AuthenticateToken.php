@@ -20,7 +20,7 @@ class AuthenticateToken
          *
          * Authorization: Bearer RANDOM_TOKEN
          */
-        $token = $request->header('token');
+        $token = $request->header('Authorization');
 
         // Token is missing
         if (!$token) {
