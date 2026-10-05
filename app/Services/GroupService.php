@@ -72,6 +72,7 @@ class GroupService
     public function ensureOwner(Group $group, User $user): void
     {
         $userId = (string) $user->getKey();
+        
 
         if ((string) $group->owner_id !== $userId) {
             throw new UnauthorizedGroupAccessException(
