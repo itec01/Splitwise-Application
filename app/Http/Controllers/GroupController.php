@@ -1,11 +1,11 @@
 <?php
-
-namespace App\Http\Controllers;
+namespace App\http\Controllers;
 
 use App\Http\Requests\AddGroupMemberRequest;
 use App\Http\Requests\CreateGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use App\Http\Resources\GroupResource;
+use App\Services\BalanceService;
 use App\Services\GroupService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -179,4 +179,32 @@ class GroupController extends Controller
             'data' => new GroupResource($groupModel),
         ]);
     }
+
+    /**
+     * Get group balances.
+     */
+    public function balances(
+        Request $request,
+        string $group
+    ): JsonResponse {
+        $groupModel = $this->groupService->findGroup($group);
+
+        $this->groupService->ensureMember(
+            $groupModel,
+            $request->user()
+        );
+
+        $balances = app(BalanceService::class)
+            ->getGroupBalances($groupModel);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Group balances retrieved successfully.',
+            'data' => [
+                'group_id' => (string) $groupModel->getKey(),
+                'balances' => $balances,
+            ],
+        ]);
+    }
 }
+?>
