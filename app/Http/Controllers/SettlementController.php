@@ -27,15 +27,7 @@ class SettlementController extends Controller
         CreateSettlementRequest $request,
         string $group
     ): JsonResponse {
-        $groupModel = Group::find($group);
-
-        if (!$groupModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Group not found.',
-                'errors' => null,
-            ], 404);
-        }
+        $groupModel = $request->attributes->get('group');
 
          $paidby = User::find($request->validated('paid_by'));
 
@@ -67,15 +59,7 @@ class SettlementController extends Controller
         Request $request,
         string $group
     ): JsonResponse {
-        $groupModel = Group::find($group);
-
-        if (!$groupModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Group not found.',
-                'errors' => null,
-            ], 404);
-        }
+        $groupModel = $request->attributes->get('group');
 
         $settlements = $this->settlementService->getGroupSettlements(
             $groupModel,
@@ -98,25 +82,8 @@ class SettlementController extends Controller
         string $group,
         string $settlement
     ): JsonResponse {
-        $groupModel = Group::find($group);
-
-        if (!$groupModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Group not found.',
-                'errors' => null,
-            ], 404);
-        }
-
-        $settlementModel = Settlement::find($settlement);
-
-        if (!$settlementModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Settlement not found.',
-                'errors' => null,
-            ], 404);
-        }
+        $groupModel = $request->attributes->get('group');
+        $settlementModel = $request->attributes->get('settlement');
 
         $updated = $this->settlementService->updateSettlement(
             $groupModel,
@@ -140,25 +107,8 @@ class SettlementController extends Controller
         string $group,
         string $settlement
     ): JsonResponse {
-        $groupModel = Group::find($group);
-
-        if (!$groupModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Group not found.',
-                'errors' => null,
-            ], 404);
-        }
-
-        $settlementModel = Settlement::find($settlement);
-
-        if (!$settlementModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Settlement not found.',
-                'errors' => null,
-            ], 404);
-        }
+        $groupModel = $request->attributes->get('group');
+        $settlementModel = $request->attributes->get('settlement');
 
         $this->settlementService->deleteSettlement(
             $groupModel,

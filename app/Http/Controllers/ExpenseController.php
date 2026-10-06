@@ -25,15 +25,7 @@ class ExpenseController extends Controller
         CreateExpenseRequest $request,
         string $group
     ): JsonResponse {
-        $groupModel = Group::find($group);
-
-        if (!$groupModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Group not found.',
-                'errors' => null,
-            ], 404);
-        }
+        $groupModel = $request->attributes->get('group');
 
         $expense = $this->expenseService->createExpense(
             $groupModel,
@@ -55,15 +47,7 @@ class ExpenseController extends Controller
         Request $request,
         string $group
     ): JsonResponse {
-        $groupModel = Group::find($group);
-
-        if (!$groupModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Group not found.',
-                'errors' => null,
-            ], 404);
-        }
+        $groupModel = $request->attributes->get('group');
 
         $expenses = $this->expenseService->getGroupExpenses(
             $groupModel,
@@ -91,10 +75,7 @@ class ExpenseController extends Controller
         Request $request,
         string $expense
     ): JsonResponse {
-        $expenseModel = $this->expenseService->findExpense(
-            $expense,
-            $request->user()
-        );
+        $expenseModel = $request->attributes->get('expense');
 
         return response()->json([
             'success' => true,
@@ -110,15 +91,7 @@ class ExpenseController extends Controller
         UpdateExpenseRequest $request,
         string $expense
     ): JsonResponse {
-        $expenseModel = Expense::find($expense);
-
-        if (!$expenseModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Expense not found.',
-                'errors' => null,
-            ], 404);
-        }
+        $expenseModel = $request->attributes->get('expense');
 
         $expenseModel = $this->expenseService->updateExpense(
             $expenseModel,
@@ -140,15 +113,7 @@ class ExpenseController extends Controller
         Request $request,
         string $expense
     ): JsonResponse {
-        $expenseModel = Expense::find($expense);
-
-        if (!$expenseModel) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Expense not found.',
-                'errors' => null,
-            ], 404);
-        }
+        $expenseModel = $request->attributes->get('expense');
 
         $this->expenseService->deleteExpense(
             $expenseModel,

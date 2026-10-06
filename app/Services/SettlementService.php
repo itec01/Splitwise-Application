@@ -25,7 +25,6 @@ class SettlementService
         array $data,
         User $payer
     ): Settlement {
-        $this->groupService->ensureMember($group, $payer);
 
         $payerId = (string) $payer->getKey();
         $receiverId = (string) ($data['paid_to'] ?? '');
@@ -123,7 +122,6 @@ class SettlementService
         User $user,
         int $perPage = 15
     ): LengthAwarePaginator {
-        $this->groupService->ensureMember($group, $user);
 
         return Settlement::where(
             'group_id',
@@ -142,17 +140,6 @@ class SettlementService
         array $data,
         User $user
     ): Settlement {
-        $this->groupService->ensureMember($group, $user);
-
-        $this->ensureSettlementBelongsToGroup($group, $settlement);
-
-        if ((string) $settlement->paid_by !== (string) $user->getKey()) {
-            throw ValidationException::withMessages([
-                'settlement' => [
-                    'Only the original payer can update this settlement.',
-                ],
-            ]);
-        }
 
         $payerId = (string) $settlement->paid_by;
         $receiverId = (string) $settlement->paid_to;
@@ -212,17 +199,6 @@ class SettlementService
         Settlement $settlement,
         User $user
     ): void {
-        $this->groupService->ensureMember($group, $user);
-
-        $this->ensureSettlementBelongsToGroup($group, $settlement);
-
-        if ((string) $settlement->paid_by !== (string) $user->getKey()) {
-            throw ValidationException::withMessages([
-                'settlement' => [
-                    'Only the original payer can delete this settlement.',
-                ],
-            ]);
-        }
 
         Log::info('Settlement deleted', [
             'settlement_id' => (string) $settlement->getKey(),
@@ -235,18 +211,13 @@ class SettlementService
 
     /**
      * Ensure the settlement belongs to the requested group.
+     * @deprecated Authorized by middleware
      */
     private function ensureSettlementBelongsToGroup(
         Group $group,
         Settlement $settlement
     ): void {
-        if ((string) $settlement->group_id !== (string) $group->getKey()) {
-            throw ValidationException::withMessages([
-                'settlement' => [
-                    'This settlement does not belong to this group.',
-                ],
-            ]);
-        }
+        // Moved to EnsureSettlementAccess middleware
     }
 
     /**

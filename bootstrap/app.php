@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'auth.token' => AuthenticateToken::class,
+            'group.access' => \App\Http\Middleware\EnsureGroupAccess::class,
+            'expense.access' => \App\Http\Middleware\EnsureExpenseAccess::class,
+            'settlement.access' => \App\Http\Middleware\EnsureSettlementAccess::class,
         ]);
 
     })

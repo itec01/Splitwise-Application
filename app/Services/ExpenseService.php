@@ -23,8 +23,7 @@ class ExpenseService
         array $data,
         User $user
     ): Expense {
-        // Authenticated user must belong to the group.
-        $this->groupService->ensureMember($group, $user);
+        // Validation of payer relative to group members
 
         $memberIds = collect($group->member_ids ?? [])
             ->map(fn ($id) => (string) $id)
@@ -361,7 +360,6 @@ class ExpenseService
         User $user,
         array $filters = []
     ) {
-        $this->groupService->ensureMember($group, $user);
 
         $query = Expense::where(
             'group_id',
@@ -424,25 +422,6 @@ class ExpenseService
             throw ValidationException::withMessages([
                 'group' => [
                     'Expense group not found.'
-                ],
-            ]);
-        }
-
-        $this->groupService->ensureMember($group, $user);
-
-        /*
-         * For now, allow the group owner or current payer
-         * to update the expense.
-         */
-        $userId = (string) $user->getKey();
-
-        if (
-            (string) $group->owner_id !== $userId &&
-            (string) $expense->paid_by !== $userId
-        ) {
-            throw ValidationException::withMessages([
-                'expense' => [
-                    'Only the group owner or expense payer can update this expense.'
                 ],
             ]);
         }
@@ -517,19 +496,6 @@ class ExpenseService
             throw ValidationException::withMessages([
                 'group' => [
                     'Expense group not found.'
-                ],
-            ]);
-        }
-
-        $this->groupService->ensureMember($group, $user);
-
-        $userId = (string) $user->getKey();
-        $payerId = (string) $expense->paid_by;
-
-    if ($payerId !== $userId) {
-            throw ValidationException::withMessages([
-                'expense' => [
-                    'Only the member who paid for this expense can delete it.'
                 ],
             ]);
         }

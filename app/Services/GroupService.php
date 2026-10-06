@@ -54,31 +54,20 @@ class GroupService
 
     /**
      * Ensure user is a group member.
+     * @deprecated Authorized by middleware
      */
     public function ensureMember(Group $group, User $user): void
     {
-        $userId = (string) $user->getKey();
-
-        if (!in_array($userId, $group->member_ids ?? [], true)) {
-            throw new UnauthorizedGroupAccessException(
-                'You are not a member of this group.'
-            );
-        }
+        // Moved to EnsureGroupAccess middleware
     }
 
     /**
      * Ensure user is group owner.
+     * @deprecated Authorized by middleware
      */
     public function ensureOwner(Group $group, User $user): void
     {
-        $userId = (string) $user->getKey();
-        
-
-        if ((string) $group->owner_id !== $userId) {
-            throw new UnauthorizedGroupAccessException(
-                'Only the group owner can perform this action.'
-            );
-        }
+        // Moved to EnsureGroupAccess middleware
     }
 
     /**
@@ -86,10 +75,8 @@ class GroupService
      */
     public function updateGroup(
         Group $group,
-        array $data,
-        User $user
+        array $data
     ): Group {
-        $this->ensureOwner($group, $user);
 
         $group->update([
             'name' => $data['name'],
@@ -106,7 +93,6 @@ class GroupService
         Group $group,
         User $user
     ): void {
-        $this->ensureOwner($group, $user);
 
         $group->delete();
 
@@ -121,10 +107,8 @@ class GroupService
      */
     public function addMember(
         Group $group,
-        User $user,
         string $memberId
     ): Group {
-        $this->ensureOwner($group, $user);
 
         $member = User::find($memberId);
 
@@ -159,10 +143,8 @@ class GroupService
      */
     public function removeMember(
         Group $group,
-        User $user,
         string $memberId
     ): Group {
-        $this->ensureOwner($group, $user);
 
         if ((string) $group->owner_id === $memberId) {
             throw new \InvalidArgumentException(
@@ -196,10 +178,8 @@ class GroupService
      * Get group members.
      */
     public function getMembers(
-        Group $group,
-        User $user
+        Group $group
     ) {
-        $this->ensureMember($group, $user);
 
         $memberIds = $group->member_ids ?? [];
 

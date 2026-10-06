@@ -57,12 +57,7 @@ class GroupController extends Controller
         Request $request,
         string $group
     ): JsonResponse {
-        $groupModel = $this->groupService->findGroup($group);
-
-        $this->groupService->ensureMember(
-            $groupModel,
-            $request->user()
-        );
+        $groupModel = $request->attributes->get('group');
 
         return response()->json([
             'success' => true,
@@ -78,12 +73,11 @@ class GroupController extends Controller
         UpdateGroupRequest $request,
         string $group
     ): JsonResponse {
-        $groupModel = $this->groupService->findGroup($group);
+        $groupModel = $request->attributes->get('group');
 
         $groupModel = $this->groupService->updateGroup(
             $groupModel,
-            $request->validated(),
-            $request->user()
+            $request->validated()
         );
 
         return response()->json([
@@ -100,7 +94,7 @@ class GroupController extends Controller
         Request $request,
         string $group
     ): JsonResponse {
-        $groupModel = $this->groupService->findGroup($group);
+        $groupModel = $request->attributes->get('group');
 
         $this->groupService->deleteGroup(
             $groupModel,
@@ -121,11 +115,10 @@ class GroupController extends Controller
         Request $request,
         string $group
     ): JsonResponse {
-        $groupModel = $this->groupService->findGroup($group);
+        $groupModel = $request->attributes->get('group');
 
         $members = $this->groupService->getMembers(
-            $groupModel,
-            $request->user()
+            $groupModel
         );
 
         return response()->json([
@@ -142,11 +135,10 @@ class GroupController extends Controller
         AddGroupMemberRequest $request,
         string $group
     ): JsonResponse {
-        $groupModel = $this->groupService->findGroup($group);
+        $groupModel = $request->attributes->get('group');
 
         $groupModel = $this->groupService->addMember(
             $groupModel,
-            $request->user(),
             $request->validated('user_id')
         );
 
@@ -165,11 +157,10 @@ class GroupController extends Controller
         string $group,
         string $user
     ): JsonResponse {
-        $groupModel = $this->groupService->findGroup($group);
+        $groupModel = $request->attributes->get('group');
 
         $groupModel = $this->groupService->removeMember(
             $groupModel,
-            $request->user(),
             $user
         );
 
@@ -187,12 +178,7 @@ class GroupController extends Controller
         Request $request,
         string $group
     ): JsonResponse {
-        $groupModel = $this->groupService->findGroup($group);
-
-        $this->groupService->ensureMember(
-            $groupModel,
-            $request->user()
-        );
+        $groupModel = $request->attributes->get('group');
 
         $balances = app(BalanceService::class)
             ->getGroupBalances($groupModel);
