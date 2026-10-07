@@ -23,7 +23,7 @@ class AuthenticateToken
         $token = $request->header('Authorization');
 
         // Token is missing
-        if (!$token) {
+        if (! $token) {
             return response()->json([
                 'success' => false,
                 'message' => 'Authentication token is required.',
@@ -35,7 +35,7 @@ class AuthenticateToken
         $tokenRecord = Token::where('api_token', $token)->first();
 
         // Token does not exist
-        if (!$tokenRecord) {
+        if (! $tokenRecord) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid or expired authentication token.',
@@ -47,7 +47,7 @@ class AuthenticateToken
         $user = User::find($tokenRecord->user_id);
 
         // User no longer exists
-        if (!$user) {
+        if (! $user) {
             // Remove invalid token
             $tokenRecord->delete();
 

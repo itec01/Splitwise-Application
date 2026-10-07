@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateSettlementRequest;
 use App\Http\Requests\UpdateSettlementRequest;
+use App\Http\Resources\SettlementResource;
 use App\Models\Group;
 use App\Models\Settlement;
 use App\Models\User;
@@ -11,14 +12,11 @@ use App\Services\SettlementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-use App\Http\Resources\SettlementResource;
-
 class SettlementController extends Controller
 {
     public function __construct(
         protected SettlementService $settlementService
-    ) {
-    }
+    ) {}
 
     /**
      * Create a settlement.
@@ -29,9 +27,9 @@ class SettlementController extends Controller
     ): JsonResponse {
         $groupModel = $request->attributes->get('group');
 
-         $paidby = User::find($request->validated('paid_by'));
+        $paidby = User::find($request->validated('paid_by'));
 
-        if (!$paidby) {
+        if (! $paidby) {
             return response()->json([
                 'success' => false,
                 'message' => 'PaidBy User not found.',
@@ -42,14 +40,14 @@ class SettlementController extends Controller
         $settlement = $this->settlementService->createSettlement(
             $groupModel,
             $request->validated(),
-            $paidby 
+            $paidby
         );
 
         return response()->json([
             'success' => true,
             'message' => 'Settlement created successfully.',
             'data' => new SettlementResource($settlement),
-            ], 201);
+        ], 201);
     }
 
     /**

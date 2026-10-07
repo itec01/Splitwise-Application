@@ -21,6 +21,6 @@ class Expense extends Model
 
     protected $casts = [
         'amount' => 'float',
-      //  'participants' => 'array',
+        //  'participants' => 'array',
     ];
 }

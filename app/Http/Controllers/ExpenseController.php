@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateExpenseRequest;
 use App\Http\Requests\UpdateExpenseRequest;
 use App\Http\Resources\ExpenseResource;
-use App\Models\Group;
 use App\Models\Expense;
+use App\Models\Group;
 use App\Services\ExpenseService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,8 +15,7 @@ class ExpenseController extends Controller
 {
     public function __construct(
         protected ExpenseService $expenseService
-    ) {
-    }
+    ) {}
 
     /**
      * Create expense.

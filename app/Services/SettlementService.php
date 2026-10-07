@@ -14,8 +14,7 @@ class SettlementService
     public function __construct(
         protected GroupService $groupService,
         protected BalanceService $balanceService
-    ) {
-    }
+    ) {}
 
     /**
      * Create a settlement from the authenticated user to another member.
@@ -28,7 +27,7 @@ class SettlementService
 
         $payerId = (string) $payer->getKey();
         $receiverId = (string) ($data['paid_to'] ?? '');
-        
+
         // // If paid_by is supplied, it must match the authenticated user.
         // if (
         //     isset($data['paid_by'])
@@ -54,7 +53,7 @@ class SettlementService
             ->map(fn ($id) => (string) $id)
             ->all();
 
-        if (!in_array($receiverId, $memberIds, true)) {
+        if (! in_array($receiverId, $memberIds, true)) {
             throw ValidationException::withMessages([
                 'paid_to' => [
                     'The receiver must be a member of this group.',
@@ -62,7 +61,7 @@ class SettlementService
             ]);
         }
 
-          if (!in_array($payerId, $memberIds, true)) {
+        if (! in_array($payerId, $memberIds, true)) {
             throw ValidationException::withMessages([
                 'paid_by' => [
                     'The payer must be a member of this group.',
@@ -70,7 +69,7 @@ class SettlementService
             ]);
         }
 
-        if (!User::find($receiverId)) {
+        if (! User::find($receiverId)) {
             throw ValidationException::withMessages([
                 'paid_to' => [
                     'The selected receiver does not exist.',
@@ -90,7 +89,7 @@ class SettlementService
             throw ValidationException::withMessages([
                 'amount' => [
                     'The settlement amount cannot exceed your outstanding debt of '
-                    . number_format($outstandingDebt, 2, '.', '') . '.',
+                    .number_format($outstandingDebt, 2, '.', '').'.',
                 ],
             ]);
         }
@@ -169,7 +168,7 @@ class SettlementService
             throw ValidationException::withMessages([
                 'amount' => [
                     'The amount cannot exceed the available debt of '
-                    . number_format($availableDebt, 2, '.', '') . '.',
+                    .number_format($availableDebt, 2, '.', '').'.',
                 ],
             ]);
         }
@@ -211,6 +210,7 @@ class SettlementService
 
     /**
      * Ensure the settlement belongs to the requested group.
+     *
      * @deprecated Authorized by middleware
      */
     private function ensureSettlementBelongsToGroup(
@@ -226,8 +226,8 @@ class SettlementService
     private function validatedAmount(mixed $amount): float
     {
         if (
-            !is_numeric($amount)
-            || !is_finite((float) $amount)
+            ! is_numeric($amount)
+            || ! is_finite((float) $amount)
             || (float) $amount <= 0
         ) {
             throw ValidationException::withMessages([

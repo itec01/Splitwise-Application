@@ -2,24 +2,24 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Illuminate\Http\Request;
 use App\Models\Expense;
 use App\Models\Group;
+use Closure;
+use Illuminate\Http\Request;
 
 class EnsureExpenseAccess
 {
     public function handle(Request $request, Closure $next, string $ability = 'view')
     {
         $expenseId = $request->route('expense');
-        
-        if (!$expenseId) {
+
+        if (! $expenseId) {
             return $this->errorNotFound();
         }
 
         $expense = Expense::find($expenseId);
 
-        if (!$expense) {
+        if (! $expense) {
             return $this->errorNotFound();
         }
 
@@ -30,16 +30,16 @@ class EnsureExpenseAccess
 
         $group = $request->attributes->get('group') ?? Group::find($expense->group_id);
 
-        if (!$group) {
+        if (! $group) {
             return $this->errorNotFound();
         }
 
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthenticated.'
+                'message' => 'Unauthenticated.',
             ], 401);
         }
 
@@ -48,7 +48,7 @@ class EnsureExpenseAccess
         $ownerId = (string) $group->owner_id;
 
         // Ensure user is member of the group
-        if (!in_array($userId, $group->member_ids ?? [], true)) {
+        if (! in_array($userId, $group->member_ids ?? [], true)) {
             return $this->errorForbidden();
         }
 
@@ -73,7 +73,7 @@ class EnsureExpenseAccess
     {
         return response()->json([
             'success' => false,
-            'message' => 'Resource not found.'
+            'message' => 'Resource not found.',
         ], 404);
     }
 
@@ -81,7 +81,7 @@ class EnsureExpenseAccess
     {
         return response()->json([
             'success' => false,
-            'message' => 'You are not authorized to perform this action.'
+            'message' => 'You are not authorized to perform this action.',
         ], 403);
     }
 }

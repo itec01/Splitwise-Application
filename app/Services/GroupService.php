@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Exceptions\GroupNotFoundException;
-use App\Exceptions\UnauthorizedGroupAccessException;
 use App\Exceptions\MemberExistsException;
 use App\Models\Group;
 use App\Models\User;
@@ -45,8 +44,8 @@ class GroupService
     {
         $group = Group::find($groupId);
 
-        if (!$group) {
-            throw new GroupNotFoundException();
+        if (! $group) {
+            throw new GroupNotFoundException;
         }
 
         return $group;
@@ -54,6 +53,7 @@ class GroupService
 
     /**
      * Ensure user is a group member.
+     *
      * @deprecated Authorized by middleware
      */
     public function ensureMember(Group $group, User $user): void
@@ -63,6 +63,7 @@ class GroupService
 
     /**
      * Ensure user is group owner.
+     *
      * @deprecated Authorized by middleware
      */
     public function ensureOwner(Group $group, User $user): void
@@ -112,19 +113,19 @@ class GroupService
 
         $member = User::find($memberId);
 
-        if (!$member) {
+        if (! $member) {
             throw new \InvalidArgumentException(
                 'The selected user does not exist.'
             );
         }
 
         $memberIds = $group->member_ids ?? [];
-       // echo $memberIds;exit();
+        // echo $memberIds;exit();
 
         $memberId = (string) $member->getKey();
 
         if (in_array($memberId, $memberIds, true)) {
-            throw new MemberExistsException();
+            throw new MemberExistsException;
         }
 
         $memberIds[] = $memberId;
@@ -133,8 +134,6 @@ class GroupService
             'member_ids' => array_values($memberIds),
         ]);
 
-        
-         
         return $group->fresh();
     }
 
@@ -154,7 +153,7 @@ class GroupService
 
         $memberIds = $group->member_ids ?? [];
 
-        if (!in_array($memberId, $memberIds, true)) {
+        if (! in_array($memberId, $memberIds, true)) {
             throw new \InvalidArgumentException(
                 'User is not a member of this group.'
             );

@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Middleware\AuthenticateToken;
+use App\Http\Middleware\EnsureExpenseAccess;
+use App\Http\Middleware\EnsureGroupAccess;
+use App\Http\Middleware\EnsureSettlementAccess;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\AuthenticateToken;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,9 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'auth.token' => AuthenticateToken::class,
-            'group.access' => \App\Http\Middleware\EnsureGroupAccess::class,
-            'expense.access' => \App\Http\Middleware\EnsureExpenseAccess::class,
-            'settlement.access' => \App\Http\Middleware\EnsureSettlementAccess::class,
+            'group.access' => EnsureGroupAccess::class,
+            'expense.access' => EnsureExpenseAccess::class,
+            'settlement.access' => EnsureSettlementAccess::class,
         ]);
 
     })

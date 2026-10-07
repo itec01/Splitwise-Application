@@ -1,4 +1,5 @@
 <?php
+
 namespace App\http\Controllers;
 
 use App\Http\Requests\AddGroupMemberRequest;
@@ -14,8 +15,7 @@ class GroupController extends Controller
 {
     public function __construct(
         protected GroupService $groupService
-    ) {
-    }
+    ) {}
 
     /**
      * Create group.
@@ -193,4 +193,3 @@ class GroupController extends Controller
         ]);
     }
 }
-?>

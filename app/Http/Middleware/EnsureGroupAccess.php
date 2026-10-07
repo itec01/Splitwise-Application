@@ -2,32 +2,32 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Group;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\Group;
 
 class EnsureGroupAccess
 {
     public function handle(Request $request, Closure $next, string $ability = 'member')
     {
         $groupId = $request->route('group');
-        
-        if (!$groupId) {
+
+        if (! $groupId) {
             return $this->errorNotFound();
         }
 
         $group = Group::find($groupId);
 
-        if (!$group) {
+        if (! $group) {
             return $this->errorNotFound();
         }
 
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthenticated.'
+                'message' => 'Unauthenticated.',
             ], 401);
         }
 
@@ -38,10 +38,10 @@ class EnsureGroupAccess
                 return $this->errorForbidden();
             }
         } else {
-            // Default to 'member' check. 
+            // Default to 'member' check.
             // Note: owners are also members in this application (added during group creation).
             // But we should verify they are in the member_ids array.
-            if (!in_array($userId, $group->member_ids ?? [], true)) {
+            if (! in_array($userId, $group->member_ids ?? [], true)) {
                 return $this->errorForbidden();
             }
         }
@@ -56,7 +56,7 @@ class EnsureGroupAccess
     {
         return response()->json([
             'success' => false,
-            'message' => 'Resource not found.'
+            'message' => 'Resource not found.',
         ], 404);
     }
 
@@ -64,7 +64,7 @@ class EnsureGroupAccess
     {
         return response()->json([
             'success' => false,
-            'message' => 'You are not authorized to perform this action.'
+            'message' => 'You are not authorized to perform this action.',
         ], 403);
     }
 }

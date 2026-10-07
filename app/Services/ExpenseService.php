@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Expense;
 use App\Models\Group;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -12,8 +13,7 @@ class ExpenseService
 {
     public function __construct(
         protected GroupService $groupService
-    ) {
-    }
+    ) {}
 
     /**
      * Create an expense.
@@ -35,10 +35,10 @@ class ExpenseService
          */
         $paidBy = (string) $data['paid_by'];
 
-        if (!in_array($paidBy, $memberIds, true)) {
+        if (! in_array($paidBy, $memberIds, true)) {
             throw ValidationException::withMessages([
                 'paid_by' => [
-                    'The payer must be a member of this group.'
+                    'The payer must be a member of this group.',
                 ],
             ]);
         }
@@ -60,7 +60,7 @@ class ExpenseService
         if (count($participantIds) !== count(array_unique($participantIds))) {
             throw ValidationException::withMessages([
                 'participants' => [
-                    'A participant cannot be added more than once.'
+                    'A participant cannot be added more than once.',
                 ],
             ]);
         }
@@ -69,10 +69,10 @@ class ExpenseService
          * Every participant must belong to the group.
          */
         foreach ($participantIds as $participantId) {
-            if (!in_array($participantId, $memberIds, true)) {
+            if (! in_array($participantId, $memberIds, true)) {
                 throw ValidationException::withMessages([
                     'participants' => [
-                        "User {$participantId} is not a member of this group."
+                        "User {$participantId} is not a member of this group.",
                     ],
                 ]);
             }
@@ -134,7 +134,7 @@ class ExpenseService
 
             default => throw ValidationException::withMessages([
                 'split_type' => [
-                    'Invalid split type.'
+                    'Invalid split type.',
                 ],
             ]),
         };
@@ -152,7 +152,7 @@ class ExpenseService
         if ($count === 0) {
             throw ValidationException::withMessages([
                 'participants' => [
-                    'At least one participant is required.'
+                    'At least one participant is required.',
                 ],
             ]);
         }
@@ -207,10 +207,10 @@ class ExpenseService
         $participantTotalCents = 0;
 
         foreach ($participants as $participant) {
-            if (!array_key_exists('amount', $participant)) {
+            if (! array_key_exists('amount', $participant)) {
                 throw ValidationException::withMessages([
                     'participants' => [
-                        'Each participant must have an amount for exact splitting.'
+                        'Each participant must have an amount for exact splitting.',
                     ],
                 ]);
             }
@@ -220,7 +220,7 @@ class ExpenseService
             if ($amount < 0) {
                 throw ValidationException::withMessages([
                     'participants' => [
-                        'Participant amount cannot be negative.'
+                        'Participant amount cannot be negative.',
                     ],
                 ]);
             }
@@ -231,7 +231,7 @@ class ExpenseService
         if ($participantTotalCents !== $totalCents) {
             throw ValidationException::withMessages([
                 'participants' => [
-                    'The exact participant amounts must equal the total expense amount.'
+                    'The exact participant amounts must equal the total expense amount.',
                 ],
             ]);
         }
@@ -257,10 +257,10 @@ class ExpenseService
         $percentageTotal = 0;
 
         foreach ($participants as $participant) {
-            if (!array_key_exists('percentage', $participant)) {
+            if (! array_key_exists('percentage', $participant)) {
                 throw ValidationException::withMessages([
                     'participants' => [
-                        'Each participant must have a percentage for percentage splitting.'
+                        'Each participant must have a percentage for percentage splitting.',
                     ],
                 ]);
             }
@@ -270,7 +270,7 @@ class ExpenseService
             if ($percentage < 0 || $percentage > 100) {
                 throw ValidationException::withMessages([
                     'participants' => [
-                        'Percentage must be between 0 and 100.'
+                        'Percentage must be between 0 and 100.',
                     ],
                 ]);
             }
@@ -284,7 +284,7 @@ class ExpenseService
         if (abs($percentageTotal - 100) > 0.00001) {
             throw ValidationException::withMessages([
                 'participants' => [
-                    'Participant percentages must equal 100%.'
+                    'Participant percentages must equal 100%.',
                 ],
             ]);
         }
@@ -329,20 +329,20 @@ class ExpenseService
     ): Expense {
         $expense = Expense::find($expenseId);
 
-        if (!$expense) {
+        if (! $expense) {
             throw ValidationException::withMessages([
                 'expense' => [
-                    'Expense not found.'
+                    'Expense not found.',
                 ],
             ]);
         }
 
         $group = Group::find($expense->group_id);
 
-        if (!$group) {
+        if (! $group) {
             throw ValidationException::withMessages([
                 'group' => [
-                    'Expense group not found.'
+                    'Expense group not found.',
                 ],
             ]);
         }
@@ -366,34 +366,34 @@ class ExpenseService
             (string) $group->getKey()
         );
 
-        if (!empty($filters['payer'])) {
+        if (! empty($filters['payer'])) {
             $query->where(
                 'paid_by',
                 (string) $filters['payer']
             );
         }
 
-        if (!empty($filters['split_type'])) {
+        if (! empty($filters['split_type'])) {
             $query->where(
                 'split_type',
                 $filters['split_type']
             );
         }
 
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->where(
                 'created_at',
                 '>=',
-                \Carbon\Carbon::parse($filters['date_from'])
+                Carbon::parse($filters['date_from'])
                     ->startOfDay()
             );
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->where(
                 'created_at',
                 '<=',
-                \Carbon\Carbon::parse($filters['date_to'])
+                Carbon::parse($filters['date_to'])
                     ->endOfDay()
             );
         }
@@ -418,10 +418,10 @@ class ExpenseService
     ): Expense {
         $group = Group::find($expense->group_id);
 
-        if (!$group) {
+        if (! $group) {
             throw ValidationException::withMessages([
                 'group' => [
-                    'Expense group not found.'
+                    'Expense group not found.',
                 ],
             ]);
         }
@@ -432,10 +432,10 @@ class ExpenseService
 
         $paidBy = (string) $data['paid_by'];
 
-        if (!in_array($paidBy, $memberIds, true)) {
+        if (! in_array($paidBy, $memberIds, true)) {
             throw ValidationException::withMessages([
                 'paid_by' => [
-                    'The payer must be a member of this group.'
+                    'The payer must be a member of this group.',
                 ],
             ]);
         }
@@ -451,16 +451,16 @@ class ExpenseService
         ) {
             throw ValidationException::withMessages([
                 'participants' => [
-                    'A participant cannot be added more than once.'
+                    'A participant cannot be added more than once.',
                 ],
             ]);
         }
 
         foreach ($participantIds as $participantId) {
-            if (!in_array($participantId, $memberIds, true)) {
+            if (! in_array($participantId, $memberIds, true)) {
                 throw ValidationException::withMessages([
                     'participants' => [
-                        "User {$participantId} is not a member of this group."
+                        "User {$participantId} is not a member of this group.",
                     ],
                 ]);
             }
@@ -492,10 +492,10 @@ class ExpenseService
     ): void {
         $group = Group::find($expense->group_id);
 
-        if (!$group) {
+        if (! $group) {
             throw ValidationException::withMessages([
                 'group' => [
-                    'Expense group not found.'
+                    'Expense group not found.',
                 ],
             ]);
         }

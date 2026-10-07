@@ -11,8 +11,7 @@ class AuthController extends Controller
 {
     public function __construct(
         protected AuthenticationService $authenticationService
-    ) {
-    }
+    ) {}
 
     /**
      * Register
@@ -28,7 +27,7 @@ class AuthController extends Controller
             'message' => 'User registered successfully.',
             'data' => [
                 'user' => new UserResource($result['user']),
-                //'token' => $result['token'],
+                // 'token' => $result['token'],
             ],
         ], 201);
     }

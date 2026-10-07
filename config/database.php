@@ -114,30 +114,29 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
-
         'mongodb' => [
 
-    'driver' => 'mongodb',
+            'driver' => 'mongodb',
 
-    'dsn' => env('DB_URI'),
+            'dsn' => env('DB_URI'),
 
-    'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => env('DB_HOST', '127.0.0.1'),
 
-    'port' => env('DB_PORT', 27017),
+            'port' => env('DB_PORT', 27017),
 
-    'database' => env('DB_DATABASE', 'laravel'),
+            'database' => env('DB_DATABASE', 'laravel'),
 
-    'username' => env('DB_USERNAME', ''),
+            'username' => env('DB_USERNAME', ''),
 
-    'password' => env('DB_PASSWORD', ''),
+            'password' => env('DB_PASSWORD', ''),
 
-    'options' => [
+            'options' => [
 
-        'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
+                'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
 
-    ],
+            ],
 
-],
+        ],
     ],
 
     /*

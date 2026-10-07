@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\Token;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -31,11 +31,10 @@ class AuthenticationService
         ]);
 
         // Generate random API token
-       
 
         return [
             'user' => $user,
-           
+
         ];
     }
 
@@ -48,7 +47,7 @@ class AuthenticationService
         $user = User::where('email', $data['email'])->first();
 
         // Invalid credentials
-        if (!$user || !Hash::check($data['password'], $user->password)) {
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -77,7 +76,7 @@ class AuthenticationService
     {
         $tokenRecord = Token::where('api_token', $token)->first();
 
-        if (!$tokenRecord) {
+        if (! $tokenRecord) {
             return null;
         }
 
@@ -91,7 +90,7 @@ class AuthenticationService
     {
         $tokenRecord = Token::where('api_token', $token)->first();
 
-        if (!$tokenRecord) {
+        if (! $tokenRecord) {
             return false;
         }
 

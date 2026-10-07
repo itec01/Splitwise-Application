@@ -2,24 +2,24 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Group;
+use App\Models\Settlement;
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\Settlement;
-use App\Models\Group;
 
 class EnsureSettlementAccess
 {
     public function handle(Request $request, Closure $next, string $ability = 'view')
     {
         $settlementId = $request->route('settlement');
-        
-        if (!$settlementId) {
+
+        if (! $settlementId) {
             return $this->errorNotFound();
         }
 
         $settlement = Settlement::find($settlementId);
 
-        if (!$settlement) {
+        if (! $settlement) {
             return $this->errorNotFound();
         }
 
@@ -30,16 +30,16 @@ class EnsureSettlementAccess
 
         $group = $request->attributes->get('group') ?? Group::find($settlement->group_id);
 
-        if (!$group) {
+        if (! $group) {
             return $this->errorNotFound();
         }
 
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthenticated.'
+                'message' => 'Unauthenticated.',
             ], 401);
         }
 
@@ -47,7 +47,7 @@ class EnsureSettlementAccess
         $payerId = (string) $settlement->paid_by;
 
         // Ensure user is member
-        if (!in_array($userId, $group->member_ids ?? [], true)) {
+        if (! in_array($userId, $group->member_ids ?? [], true)) {
             return $this->errorForbidden();
         }
 
@@ -67,7 +67,7 @@ class EnsureSettlementAccess
     {
         return response()->json([
             'success' => false,
-            'message' => 'Resource not found.'
+            'message' => 'Resource not found.',
         ], 404);
     }
 
@@ -75,7 +75,7 @@ class EnsureSettlementAccess
     {
         return response()->json([
             'success' => false,
-            'message' => 'You are not authorized to perform this action.'
+            'message' => 'You are not authorized to perform this action.',
         ], 403);
     }
 }

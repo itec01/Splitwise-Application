@@ -16,6 +16,6 @@ class Group extends Model
     ];
 
     protected $casts = [
-        //'member_ids' => 'array',
+        // 'member_ids' => 'array',
     ];
 }
